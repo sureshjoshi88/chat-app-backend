@@ -5,12 +5,13 @@ const cors = require("cors");
 const connectDB = require("./src/config/db");
 // const message = require("./src/moduel/message");
 const socketHandler = require("./src/controller/socket");
+const router = require("./src/routes/route");
 require("dotenv").config();
 
 
 const app = express();
 app.use(cors());
-
+app.use(express.json()); // IMPORTANT
 
 
 const server = http.createServer(app);
@@ -52,6 +53,8 @@ const io = new Server(server, {
 
 
 socketHandler(io);
+
+app.use("/api", router);
 
 
 app.get("/", (req, res) => {
