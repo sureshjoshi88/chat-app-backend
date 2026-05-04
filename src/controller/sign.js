@@ -25,7 +25,7 @@ const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // save user
-    const user = await User.create({
+    const user = await authSchema.create({
       name,
       email,
       password: hashedPassword,
