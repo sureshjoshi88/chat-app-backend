@@ -11,13 +11,26 @@ const socketHandler = (io) => {
     // new message
     socket.on("send_message", async (data) => {
       try {
-        const newMessage = new message(data);
+        if (!data.text || data.text.trim() === "") return;
+
+        const newMessage = new message({
+          text: data.text,
+          sender: data.sender || "Anonymous",
+        });
         await newMessage.save();
 
         io.emit("receive_message", newMessage);
       } catch (error) {
         console.log("Save error:", error);
       }
+    });
+
+    socket.on("typing", (username) => {
+      socket.broadcast.emit("user_typing", username);
+    });
+
+    socket.on("stop_typing", () => {
+      socket.broadcast.emit("user_stop_typing");
     });
 
     socket.on("disconnect", () => {
