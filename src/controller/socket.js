@@ -15,7 +15,7 @@ const socketHandler = (io) => {
 
         const newMessage = new message({
           text: data.text,
-          sender: data.sender || "Anonymous",
+          user: data.user || "Anonymous",
         });
         await newMessage.save();
 
