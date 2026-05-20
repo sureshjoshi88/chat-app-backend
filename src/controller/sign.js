@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const authSchema = require("../moduel/auth");
 
 const signup = async (req, res) => {
@@ -31,16 +30,10 @@ const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    // token generate
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+  
 
     res.status(201).json({
       message: "User created successfully",
-      token,
       user: {
         id: user._id,
         name: user.name,
