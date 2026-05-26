@@ -13,6 +13,10 @@ const messageSchema = new mongoose.Schema({
     ref: "User"
   },
 
+  seen: {
+   type:Boolean,
+   default:false
+},
   user: String
 }, { timestamps: true });
 

@@ -1,5 +1,6 @@
 const message = require("../moduel/message");
 const users = {};
+const onlineUsers = {};
 
 const socketHandler = (io) => {
   io.on("connection", async (socket) => {
@@ -7,6 +8,8 @@ const socketHandler = (io) => {
 
     socket.on("register", (userId) => {
       users[userId] = socket.id;
+      onlineUsers[userId] = true;
+      io.emit("online_users", Object.keys(onlineUsers));
     });
 
     // old messages
@@ -28,6 +31,29 @@ const socketHandler = (io) => {
       socket.emit("load_messages", messages);
     });
 
+    // message seen
+
+    socket.on("message_seen", async ({ messageId, senderId }) => {
+
+   await message.findByIdAndUpdate(
+      messageId,
+      {
+         seen:true
+      }
+   );
+
+   const senderSocketId = users[senderId];
+
+   if(senderSocketId){
+
+      io.to(senderSocketId).emit(
+         "message_seen_update",
+         messageId
+      );
+
+   }
+
+});
     // new message
     socket.on("send_message", async (data) => {
       try {
@@ -76,14 +102,32 @@ const socketHandler = (io) => {
 
 });
 
+    // socket.on("disconnect", () => {
+    //   console.log("user disconnected");
+    //   //  for (let userId in users) {
+    //   //   if (users[userId] === socket.id) {
+    //   //     delete users[userId];
+    //   //   }
+    //   // }
+    // });
     socket.on("disconnect", () => {
-      console.log("user disconnected");
-      //  for (let userId in users) {
-      //   if (users[userId] === socket.id) {
-      //     delete users[userId];
-      //   }
-      // }
-    });
+
+   console.log("user disconnected");
+
+   for (let userId in users) {
+
+      if (users[userId] === socket.id) {
+
+         delete users[userId];
+         delete onlineUsers[userId];
+
+      }
+
+   }
+
+   io.emit("online_users", Object.keys(onlineUsers));
+
+});
   });
 };
 
