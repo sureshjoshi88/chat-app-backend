@@ -26,7 +26,7 @@ const io = new Server(server, {
 
 socketHandler(io);
 
-app.use("/api", router);
+app.use("/api/v1", router);
 
 
 app.get("/", (req, res) => {
