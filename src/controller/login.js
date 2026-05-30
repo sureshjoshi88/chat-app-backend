@@ -8,6 +8,7 @@ const login = async (req, res) => {
 
         if (!email || !password) {
             return res.status(400).json({
+                success: false,
                 message: "All fields are required",
             });
         }
@@ -16,6 +17,7 @@ const login = async (req, res) => {
         const isMatch = await authSchema.findOne({ email });
         if (!isMatch) {
             return res.status(400).json({
+                success: false,
                 message: "Invalid email or password",
             });
         }
@@ -24,6 +26,7 @@ const login = async (req, res) => {
         const comparePassword = await bcrypt.compare(password, isMatch.password);
         if (!comparePassword) {
             return res.status(401).json({
+                success: false,
                 message: "Invalid email or password"
             });
         }
@@ -37,7 +40,7 @@ const login = async (req, res) => {
         );
 
         res.status(200).json({
-            success:true,
+            success: true,
             message: "User login successfully",
             token,
             user: {
@@ -57,15 +60,15 @@ const login = async (req, res) => {
 
 
 const getAllUser = async (req, res) => {
-    
-   try {
-     const user =  await authSchema.find().lean();
-     res.status(200).json({success:true,message:"user fetch",user})
-   } catch (error) {
-     res.status(500).json({
+
+    try {
+        const user = await authSchema.find().lean();
+        res.status(200).json({ success: true, message: "user fetch", user })
+    } catch (error) {
+        res.status(500).json({
             message: "Server error",
         });
-   }
+    }
 }
 
-module.exports = { login,getAllUser };
+module.exports = { login, getAllUser };
