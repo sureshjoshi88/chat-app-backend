@@ -18,7 +18,7 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid credentials",
             });
         }
 
@@ -27,14 +27,14 @@ const login = async (req, res) => {
         if (!comparePassword) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password"
+                message: "Invalid credentials"
             });
         }
 
 
         // token generate
         const token = jwt.sign(
-            { id: isMatch._id, email: isMatch.email },
+            { id: isMatch._id, name: isMatch.name },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
